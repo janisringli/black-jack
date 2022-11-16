@@ -8,7 +8,9 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [schuffledCards, setSchuffledCards] = useState([]);
+  const [test, setTest] = useState(0);
+  const [cardCount, setCardCount] = useState(4);
+
   let cards = [
     //8 full decks of cards
     {
@@ -2924,21 +2926,226 @@ function App() {
       icon: spades,
     },
   ];
+  const [shuffledCards, setShuffledCards] = useState(() =>
+    cards.sort(() => Math.random() - 0.5)
+  );
+
   function shuffle() {
     cards = cards.sort(() => Math.random() - 0.5);
-    setSchuffledCards(cards);
+    setShuffledCards(cards);
+    console.log(shuffledCards);
+    setTest(test + 1);
   }
-  console.log(schuffledCards);
+  function newGame() {
+    shuffle();
+  }
+  function hit() {
+    return (
+      <div className="card">
+        <div className="card-layout">
+          <div className="card-title">{shuffledCards[cardCount + 1].title}</div>
+          <img
+            className="card-image"
+            src={shuffledCards[cardCount + 1]?.icon}
+            alt={shuffledCards[cardCount + 1]?.suit}
+          />
+        </div>
+        <img
+          className="card-image-big"
+          src={shuffledCards[cardCount + 1]?.icon}
+          alt={shuffledCards[cardCount + 1]?.suit}
+        />
 
+        <div className="card-layout upsidedown">
+          <div className="card-title">
+            {shuffledCards[cardCount + 1]?.title}
+          </div>
+
+          <img
+            className="card-image"
+            src={shuffledCards[cardCount + 1]?.icon}
+            alt={shuffledCards[cardCount + 1]?.suit}
+          />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="App">
       <div className="app-container">
         <div className="app-container__header"></div>
-        <h1>React Blackjack</h1>
-        <button onClick={shuffle}>Shuffle</button>
+        <button onClick={newGame}>New Game</button>
 
         <div className="app-container__body">
-          {schuffledCards.map((card) => (
+          <h1>Dealer's hand</h1>
+          <div className="dealers-hand">
+            <div className="card-cover">
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+              <img src={spades} alt="" />
+              <img src={hearts} alt="" />
+              <img src={clubs} alt="" />
+              <img src={diamonds} alt="" />
+            </div>
+            <div className="card">
+              <div className="card-layout">
+                <div className="card-title">{shuffledCards[0].title}</div>
+                <img
+                  className="card-image"
+                  src={shuffledCards[3]?.icon}
+                  alt={shuffledCards[3]?.suit}
+                />
+              </div>
+              <img
+                className="card-image-big"
+                src={shuffledCards[3]?.icon}
+                alt={shuffledCards[3]?.suit}
+              />
+
+              <div className="card-layout upsidedown">
+                <div className="card-title">{shuffledCards[0]?.title}</div>
+
+                <img
+                  className="card-image"
+                  src={shuffledCards[3]?.icon}
+                  alt={shuffledCards[3]?.suit}
+                />
+              </div>
+            </div>
+          </div>
+          <h1>Player's hand</h1>
+          <div className="players-hand">
+            <div className="card">
+              <div className="card-layout">
+                <div className="card-title">{shuffledCards[0].title}</div>
+                <img
+                  className="card-image"
+                  src={shuffledCards[0]?.icon}
+                  alt={shuffledCards[0]?.suit}
+                />
+              </div>
+              <img
+                className="card-image-big"
+                src={shuffledCards[0]?.icon}
+                alt={shuffledCards[0]?.suit}
+              />
+
+              <div className="card-layout upsidedown">
+                <div className="card-title">{shuffledCards[0]?.title}</div>
+
+                <img
+                  className="card-image"
+                  src={shuffledCards[0]?.icon}
+                  alt={shuffledCards[0]?.suit}
+                />
+              </div>
+            </div>
+            <div className="card">
+              <div className="card-layout">
+                <div className="card-title">{shuffledCards[1].title}</div>
+                <img
+                  className="card-image"
+                  src={shuffledCards[1]?.icon}
+                  alt={shuffledCards[1]?.suit}
+                />
+              </div>
+              <img
+                className="card-image-big"
+                src={shuffledCards[1]?.icon}
+                alt={shuffledCards[1]?.suit}
+              />
+
+              <div className="card-layout upsidedown">
+                <div className="card-title">{shuffledCards[1]?.title}</div>
+
+                <img
+                  className="card-image"
+                  src={shuffledCards[1]?.icon}
+                  alt={shuffledCards[1]?.suit}
+                />
+              </div>
+            </div>
+            <button onClick={hit}> Hit</button>
+          </div>
+          {/* {schuffledCards.map((card) => (
             <div className="card" key={card.cardId}>
               <div className="card-layout">
                 <div className="card-title">{card.title}</div>
@@ -2952,7 +3159,7 @@ function App() {
                 <img className="card-image" src={card.icon} alt={card.suit} />
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
     </div>
