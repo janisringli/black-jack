@@ -3143,7 +3143,6 @@ function App() {
                 />
               </div>
             </div>
-            <button onClick={hit}> Hit</button>
           </div>
           {/* {schuffledCards.map((card) => (
             <div className="card" key={card.cardId}>
