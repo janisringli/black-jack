@@ -34,8 +34,36 @@
 }
 .app-container__body {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   flex-wrap: wrap;
   gap: 15px;
+}
+.card-cover {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  height: 250px;
+  width: 150px;
+  display: flex;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  overflow: hidden;
+}
+.players-hand {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dealers-hand {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
 }
