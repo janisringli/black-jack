@@ -3068,6 +3068,7 @@ function App() {
             </div>
           </div>
           <h1>Player's hand</h1>
+          <h2>{shuffledCards[0].value + shuffledCards[1].value}</h2>
           <div className="players-hand">
             <div className="card">
               <div className="card-layout">
