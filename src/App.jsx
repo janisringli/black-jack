@@ -6,6 +6,7 @@ import clubs from "./assets/suits/clubs.svg";
 
 import { useState } from "react";
 import "./App.css";
+import { render } from "react-dom";
 
 function App() {
   const [test, setTest] = useState(0);
@@ -2936,8 +2937,22 @@ function App() {
 
     setTest(test + 1);
   }
-  console.log(shuffledCards[0].value + shuffledCards[1].value);
   if (shuffledCards[0].title === "A" && shuffledCards[1].title === "J") {
+    return (
+      <div>
+        <h1>Blackjack!</h1>
+        <button onClick={newGame}>Shuffle</button>
+      </div>
+    );
+    console.log("Blackjack!");
+  }
+  if (shuffledCards[0].title === "J" && shuffledCards[1].title === "A") {
+    return (
+      <div>
+        <h1>Blackjack!</h1>
+        <button onClick={newGame}>Shuffle</button>
+      </div>
+    );
     console.log("Blackjack!");
   }
   if (shuffledCards[0].value + shuffledCards[1].value > 21) {
@@ -3043,7 +3058,7 @@ function App() {
             </div>
             <div className="card">
               <div className="card-layout">
-                <div className="card-title">{shuffledCards[0].title}</div>
+                <div className="card-title">{shuffledCards[3].title}</div>
                 <img
                   className="card-image"
                   src={shuffledCards[3]?.icon}
@@ -3057,7 +3072,7 @@ function App() {
               />
 
               <div className="card-layout upsidedown">
-                <div className="card-title">{shuffledCards[0]?.title}</div>
+                <div className="card-title">{shuffledCards[3]?.title}</div>
 
                 <img
                   className="card-image"
@@ -3121,21 +3136,6 @@ function App() {
               </div>
             </div>
           </div>
-          {/* {schuffledCards.map((card) => (
-            <div className="card" key={card.cardId}>
-              <div className="card-layout">
-                <div className="card-title">{card.title}</div>
-                <img className="card-image" src={card.icon} alt={card.suit} />
-              </div>
-              <img className="card-image-big" src={card.icon} alt={card.suit} />
-
-              <div className="card-layout upsidedown">
-                <div className="card-title">{card.title}</div>
-
-                <img className="card-image" src={card.icon} alt={card.suit} />
-              </div>
-            </div>
-          ))} */}
         </div>
       </div>
     </div>
