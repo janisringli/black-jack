@@ -6,12 +6,11 @@ import clubs from "./assets/suits/clubs.svg";
 
 import { useState } from "react";
 import "./App.css";
-import { render } from "react-dom";
 
 function App() {
   const [test, setTest] = useState(0);
-  const [cardCount, setCardCount] = useState(4);
-
+  const [isBlackjack, setBlackjack] = useState(false);
+  const [playerCards, setPlayerCards] = useState([]);
   let cards = [
     //8 full decks of cards
     {
@@ -2927,47 +2926,47 @@ function App() {
       icon: spades,
     },
   ];
-  const [shuffledCards, setShuffledCards] = useState(() =>
+  const [shuffledCards, setShuffledCards] = useState(([]) =>
     cards.sort(() => Math.random() - 0.5)
   );
 
   function shuffle() {
     cards = cards.sort(() => Math.random() - 0.5);
     setShuffledCards(cards);
-
+    setPlayerCards([shuffledCards[0], shuffledCards[1]]);
     setTest(test + 1);
+
+    if (cards[0].value + cards[1].value === 21) {
+      console.log("Blackjack!");
+      setBlackjack(true);
+    } else {
+      setBlackjack(false);
+    }
+    setTest(test + 1);
+
+    console.log(playerCards);
   }
-  if (shuffledCards[0].title === "A" && shuffledCards[1].title === "J") {
-    return (
-      <div>
-        <h1>Blackjack!</h1>
-        <button onClick={newGame}>Shuffle</button>
-      </div>
-    );
-    console.log("Blackjack!");
-  }
-  if (shuffledCards[0].title === "J" && shuffledCards[1].title === "A") {
-    return (
-      <div>
-        <h1>Blackjack!</h1>
-        <button onClick={newGame}>Shuffle</button>
-      </div>
-    );
-    console.log("Blackjack!");
-  }
-  if (shuffledCards[0].value + shuffledCards[1].value > 21) {
-    console.log("Bust");
-  }
+
   function newGame() {
     shuffle();
+    // setPlayerCards(...playerCards, shuffledCards[0]);
+    console.log("new game");
+    console.log(playerCards);
   }
+  function dealCard() {
+    setPlayerCards(...playerCards, shuffledCards[4]);
+    console.log(playerCards);
+  }
+
   return (
     <div className="App">
       <div className="app-container">
         <div className="app-container__header"></div>
-        <button onClick={newGame}>New Game</button>
 
         <div className="app-container__body">
+          <button onClick={newGame}>New Game</button>
+          <button onClick={dealCard}>Deal Card</button>
+
           <h1>Dealer's hand</h1>
           <div className="dealers-hand">
             <div className="card-cover">
@@ -3056,9 +3055,10 @@ function App() {
               <img src={clubs} alt="" />
               <img src={diamonds} alt="" />
             </div>
+
             <div className="card">
               <div className="card-layout">
-                <div className="card-title">{shuffledCards[3].title}</div>
+                <div className="card-title">{shuffledCards[3]?.title}</div>
                 <img
                   className="card-image"
                   src={shuffledCards[3]?.icon}
@@ -3083,59 +3083,44 @@ function App() {
             </div>
           </div>
           <h1>Player's hand</h1>
-          <h2>{shuffledCards[0].value + shuffledCards[1].value}</h2>
           <div className="players-hand">
-            <div className="card">
-              <div className="card-layout">
-                <div className="card-title">{shuffledCards[0].title}</div>
+            {playerCards.map((playerCard) => (
+              <div className="card">
+                <div className="card-layout">
+                  <div className="card-title">{playerCard?.title}</div>
+                  <img
+                    className="card-image"
+                    src={playerCard?.icon}
+                    alt={playerCard?.suit}
+                  />
+                </div>
                 <img
-                  className="card-image"
-                  src={shuffledCards[0]?.icon}
-                  alt={shuffledCards[0]?.suit}
+                  className="card-image-big"
+                  src={playerCard?.icon}
+                  alt={playerCard?.suit}
                 />
-              </div>
-              <img
-                className="card-image-big"
-                src={shuffledCards[0]?.icon}
-                alt={shuffledCards[0]?.suit}
-              />
+                <div className="card-layout upsidedown">
+                  <div className="card-title">{playerCard?.title}</div>
 
-              <div className="card-layout upsidedown">
-                <div className="card-title">{shuffledCards[0]?.title}</div>
-
-                <img
-                  className="card-image"
-                  src={shuffledCards[0]?.icon}
-                  alt={shuffledCards[0]?.suit}
-                />
+                  <img
+                    className="card-image"
+                    src={playerCard?.icon}
+                    alt={playerCard?.suit}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="card">
-              <div className="card-layout">
-                <div className="card-title">{shuffledCards[1].title}</div>
-                <img
-                  className="card-image"
-                  src={shuffledCards[1]?.icon}
-                  alt={shuffledCards[1]?.suit}
-                />
-              </div>
-              <img
-                className="card-image-big"
-                src={shuffledCards[1]?.icon}
-                alt={shuffledCards[1]?.suit}
-              />
-
-              <div className="card-layout upsidedown">
-                <div className="card-title">{shuffledCards[1]?.title}</div>
-
-                <img
-                  className="card-image"
-                  src={shuffledCards[1]?.icon}
-                  alt={shuffledCards[1]?.suit}
-                />
-              </div>
-            </div>
+            ))}
           </div>
+          {isBlackjack && (
+            <div>
+              <h2>Blackjack</h2>
+            </div>
+          )}
+          {isBlackjack && (
+            <div>
+              <h2>Blackjack</h2>
+            </div>
+          )}
         </div>
       </div>
     </div>
