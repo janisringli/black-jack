@@ -2939,16 +2939,14 @@ function App() {
     },
   ];
   // Shuffle the cards
-  const countPlayerCards = (playerCards) => {
+  function countPlayerCards() {
     let total = 0;
     playerCards.forEach((card) => {
       total += card.value;
+      setPlayerTotal(total);
     });
-    setPlayerTotal(playerCards);
-    console.log(playerTotal);
     setTest(test + 1);
-    return total;
-  };
+  }
 
   const shuffle = () => {
     const shuffled = cards.sort(() => Math.random() - 0.5);
@@ -2959,12 +2957,20 @@ function App() {
   useEffect(() => {
     shuffle();
   }, []);
+  useEffect(() => {
+    console.log("-----------------");
+    console.log(playerTotal);
+    console.log("-----------------");
+  }, [playerCards]);
+
+  //
+  useEffect(() => {}, [dealerCards]);
   function Test() {
-    console.log(playerCards);
+    countPlayerCards();
   }
   // Start a new game
   const newGame = () => {
-    setPlayerCards(shuffledCards[4], shuffledCards[5]);
+    setPlayerCards([shuffledCards[4], shuffledCards[5]]);
     console.log(playerCards);
     setTest(test + 1);
 
@@ -2994,15 +3000,11 @@ function App() {
 
   // Have the dealer draw cards until their total is at least 17
   const stand = () => {
-    setPlayerTurn(false);
     while (dealerCards) {
       if (dealerTotal >= 17) {
-        gameOver();
-        break;
+        console.log("Dealer stands");
       } else {
-        setDealerCardCount(dealerCardCount + 1);
-        setDealerCards([...dealerCards, shuffledCards[dealerCardCount]]);
-        setDealerTotal(dealerTotal + shuffledCards[dealerCardCount].value);
+        console.log("Dealer hits");
       }
     }
   };
