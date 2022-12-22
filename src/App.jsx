@@ -2957,10 +2957,9 @@ function App() {
     shuffle();
   }, []);
   useEffect(() => {
-    console.log("-----------------");
-
-    console.log("-----------------");
-  }, [playerCards]);
+    countPlayerCards();
+    
+  }, [playerCards, playerTotal]);
 
   //
   useEffect(() => {}, [dealerCards]);
