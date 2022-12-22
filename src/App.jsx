@@ -2943,8 +2943,8 @@ function App() {
     let total = 0;
     playerCards.forEach((card) => {
       total += card.value;
-      setPlayerTotal(total);
     });
+    setPlayerTotal(total);
     setTest(test + 1);
   }
 
@@ -2952,14 +2952,13 @@ function App() {
     const shuffled = cards.sort(() => Math.random() - 0.5);
     setShuffledCards(shuffled);
   };
-  function gameOver() {}
   // Use effect to shuffle the cards on mount
   useEffect(() => {
     shuffle();
   }, []);
   useEffect(() => {
     console.log("-----------------");
-    console.log(playerTotal);
+
     console.log("-----------------");
   }, [playerCards]);
 
@@ -2967,6 +2966,7 @@ function App() {
   useEffect(() => {}, [dealerCards]);
   function Test() {
     countPlayerCards();
+    console.log(playerTotal);
   }
   // Start a new game
   const newGame = () => {
