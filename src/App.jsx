@@ -13,14 +13,17 @@ function App() {
   const [playerCards, setPlayerCards] = useState([]);
   const [dealerCards, setDealerCards] = useState([]);
   const [cardCount, setCardCount] = useState(0);
-  const [dealerCardCount, setDealerCardCount] = useState(0);
   const [playerTotal, setPlayerTotal] = useState(0);
   const [dealerTotal, setDealerTotal] = useState(0);
   const [isPlayerTurn, setPlayerTurn] = useState(true);
   const [isDealerTurn, setDealerTurn] = useState(false);
-  const [isGameOver, setGameOver] = useState(true);
   const [shuffledCards, setShuffledCards] = useState([]);
+  const [hasGameStarted, setGameStatus] = useState(false);
   const [test, setTest] = useState(0);
+  const [isPlayerBust, setPlayerBust] = useState(false);
+  const [isDealerBust, setDealerBust] = useState(false);
+  const [isPlayerWon, setPlayerWon] = useState(false);
+  const [isDealerWon, setDealerWon] = useState(false);
 
   // Define the cards in the deck
   let cards = [
@@ -2938,7 +2941,7 @@ function App() {
       icon: spades,
     },
   ];
-  // Shuffle the cards
+  // Count the player's cards
   function countPlayerCards() {
     let total = 0;
     playerCards.forEach((card) => {
@@ -2947,108 +2950,268 @@ function App() {
     setPlayerTotal(total);
     setTest(test + 1);
   }
+  // Count the dealer's cards
+  function countDealerCards() {
+    let dealerTotal = 0;
+    dealerCards.forEach((card) => {
+      dealerTotal += card.value;
+    });
+    setDealerTotal(dealerTotal);
+    setTest(test + 1);
+  }
 
   const shuffle = () => {
     const shuffled = cards.sort(() => Math.random() - 0.5);
     setShuffledCards(shuffled);
   };
-  // Use effect to shuffle the cards on mount
+  // Use effect to shuffle the cards
   useEffect(() => {
     shuffle();
   }, []);
+
+  // Use effect to update the player's total when the player's cards change
   useEffect(() => {
     countPlayerCards();
-    
+    countDealerCards();
+    if (playerTotal > 21) {
+      console.log("BUST");
+      setPlayerBust(true);
+      setDealerWon(true);
+    } else if (playerCards.length === 2 && playerTotal === 21) {
+      console.log("BLACKJACK");
+      setPlayerWon(true);
+    }
   }, [playerCards, playerTotal]);
+  // Use effect to update the dealer's total when the dealer's cards change
+  useEffect(() => {
+    countDealerCards();
+    if (dealerTotal > 21) {
+      console.log("DEALER BUST");
+      setPlayerWon(true);
+    } else if (dealerCards.length === 2 && dealerTotal === 21) {
+      console.log("DEALER BLACKJACK");
+      setDealerWon(true);
+    }
+  }, [dealerCards, dealerTotal]);
 
-  //
-  useEffect(() => {}, [dealerCards]);
-  function Test() {
-    countPlayerCards();
-    console.log(playerTotal);
-  }
-  // Start a new game
+  useEffect(() => {
+    if (isPlayerBust === true) {
+      setGameStatus(false);
+    } else if (isDealerBust === true) {
+      setGameStatus(false);
+    }
+    if (playerTotal == dealerTotal) {
+      setGameStatus(false);
+    }
+  }, [isPlayerTurn, isDealerTurn]);
+  // Start a new game and sets all useState variables to their initial values
   const newGame = () => {
-    setPlayerCards([shuffledCards[4], shuffledCards[5]]);
+    setPlayerTotal(0);
+    setDealerTotal(0);
+    setCardCount(4);
+    setPlayerCards([]);
+    setDealerCards([]);
+    setPlayerBust(false);
+    setDealerBust(false);
+    setPlayerTurn(true);
+    setDealerTurn(false);
+    setPlayerWon(false);
+    setDealerWon(false);
+    setGameStatus(true);
+
+    
+    setPlayerCards([shuffledCards[0], shuffledCards[1]]);
     console.log(playerCards);
     setTest(test + 1);
-
-    setDealerCards([shuffledCards[2], shuffledCards[3]]);
-    setGameOver(false);
+    // add two new cards to the dealer
+    setDealerCards([shuffledCards[2]]);
     shuffle();
-    console.log(playerCards);
-    countPlayerCards(playerCards);
   };
 
   // Add a card to the player's hand and update the player's total
   const addCardtoPlayer = (shuffledCards, cardCount) => {
     setPlayerCards([...playerCards, shuffledCards[cardCount]]);
     setPlayerTotal(playerTotal + shuffledCards[cardCount].value);
-    if (playerTotal > 21) {
-      gameOver();
-    }
   };
 
-  // Deal a card to the player
+  // Deal a card to the player and update the player's total
   const dealCard = () => {
     setCardCount(cardCount + 1);
     addCardtoPlayer(shuffledCards, cardCount);
-    countPlayerCards(playerCards);
-    console.log(playerCards);
   };
 
   // Have the dealer draw cards until their total is at least 17
   const stand = () => {
-    while (dealerCards) {
+    setPlayerTurn(false);
+    setDealerCards([...dealerCards, shuffledCards[3]]);
+    setDealerTotal(dealerTotal + shuffledCards[3].value);
+    for (let i = 0; i < 100; i++) {
       if (dealerTotal >= 17) {
-        console.log("Dealer stands");
+        break;
       } else {
-        console.log("Dealer hits");
+        setDealerCards([...dealerCards, shuffledCards[cardCount]]);
+        setDealerTotal(dealerTotal + shuffledCards[cardCount].value);
+        setCardCount(cardCount + 1);
+        if (dealerTotal > 21) {
+          setPlayerWon(true);
+        } else if (dealerTotal > playerTotal) {
+          setDealerWon(true);
+        } else if (dealerTotal < playerTotal) {
+          setPlayerWon(true);
+        }
       }
     }
   };
 
   return (
-    <div className="App">
+    <div className="app">
       <div className="app-container">
-        <div className="app-container__header"></div>
-
         <div className="app-container__body">
-          {isGameOver ? <button onClick={newGame}>New Game</button> : ""}
-          {isPlayerTurn ? <button onClick={dealCard}>Deal Card</button> : ""}
-          {isPlayerTurn ? <button onClick={stand}>Stand</button> : ""}
-          <button onClick={Test}>Test</button>
+          {isPlayerWon ? (
+            <div className="won">
+              <div>You Won</div>
+              <button className="play-again" onClick={newGame}>
+                Play Again
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
+          {isDealerWon ? (
+            <div className="won">
+              <div>Dealer Won</div>
+              <button className="play-again" onClick={newGame}>
+                Try Again
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
           {dealerCards[0] !== undefined ? <h1>Dealer's hand</h1> : ""}
-          <div className="dealers-hand">
-            {dealerCards[0] !== undefined
-              ? dealerCards.map((dealerCard) => (
-                  <div className="card" key={dealerCard?.id}>
-                    <div className="card-layout">
-                      <div className="card-title">{dealerCard?.title}</div>
+          {hasGameStarted ? (
+            <div className="dealers-hand">
+              {isPlayerTurn ? (
+                <div className="card-cover">
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                  <img src={spades} alt="" />
+                  <img src={hearts} alt="" />
+                  <img src={clubs} alt="" />
+                  <img src={diamonds} alt="" />
+                </div>
+              ) : (
+                ""
+              )}
+              {dealerCards[0] !== undefined
+                ? dealerCards.map((dealerCard) => (
+                    <div className="card" key={dealerCard?.id}>
+                      <div className="card-layout">
+                        <div className="card-title">{dealerCard?.title}</div>
+                        <img
+                          className="card-image"
+                          src={dealerCard?.icon}
+                          alt={dealerCard?.suit}
+                        />
+                      </div>
                       <img
-                        className="card-image"
+                        className="card-image-big"
                         src={dealerCard?.icon}
                         alt={dealerCard?.suit}
                       />
-                    </div>
-                    <img
-                      className="card-image-big"
-                      src={dealerCard?.icon}
-                      alt={dealerCard?.suit}
-                    />
-                    <div className="card-layout upsidedown">
-                      <div className="card-title">{dealerCard?.title}</div>
+                      <div className="card-layout upsidedown">
+                        <div className="card-title">{dealerCard?.title}</div>
 
-                      <img
-                        className="card-image"
-                        src={dealerCard?.icon}
-                        alt={dealerCard?.suit}
-                      />
+                        <img
+                          className="card-image"
+                          src={dealerCard?.icon}
+                          alt={dealerCard?.suit}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))
-              : ""}
-          </div>
+                  ))
+                : ""}
+            </div>
+          ) : (
+            ""
+          )}
           {playerCards[0] !== undefined ? (
             <div className="playerStats">
               <h1>Player's hand</h1>
@@ -3086,6 +3249,25 @@ function App() {
                   </div>
                 ))
               : ""}
+          </div>
+          <div className="game-controls">
+            {hasGameStarted ? (
+              ""
+            ) : (
+              <button className="newGame" onClick={newGame}>
+                New Game
+              </button>
+            )}
+            {isPlayerTurn && hasGameStarted && !isPlayerBust ? (
+              <button onClick={dealCard}>Hit</button>
+            ) : (
+              ""
+            )}
+            {isPlayerTurn && hasGameStarted && !isPlayerBust ? (
+              <button onClick={stand}>Stand</button>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>
